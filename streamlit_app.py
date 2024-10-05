@@ -223,7 +223,7 @@ if st.button("Generate Tailored Resume"):
                     data = None
                 else:
                     print("Error: tailored_content does not contain valid JSON data.")
-
+data = json.loads(json_string)
 # Verify the parsed data (Optional)
 if data:
     print("\n--- Profile Summary ---")
