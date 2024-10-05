@@ -3,4 +3,4 @@ anthropic
 typst
 PyPDF2
 pydantic
-FPDF
+fpdf

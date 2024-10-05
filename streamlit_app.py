@@ -202,7 +202,7 @@ if st.button("Generate Tailored Resume"):
 )
             print(message.content)
             # Extract the content
-            tailored_content = message.content  # Extract content
+tailored_content = message.content  # Extract content
 
 # Check if tailored_content is a list and get the first element
 if isinstance(tailored_content, list) and len(tailored_content) > 0:
