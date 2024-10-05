@@ -332,6 +332,34 @@ peerapat.chiaprasert@gmail.com |
             Bachelor of Accounting (International Program)
             """
             # Save the template to a temporary .typ file
+    template = template.replace("[PROFILE_SUMMARY]", profile_summary)
+    template = template.replace("[SUMMARY_POINT_1]", key_achievements[0])
+    template = template.replace("[SUMMARY_POINT_2]", key_achievements[1])
+    template = template.replace("[SUMMARY_POINT_3]", key_achievements[2])
+
+    template = template.replace("[SKILL_1]", areas_of_expertise[0])
+    template = template.replace("[SKILL_2]", areas_of_expertise[1])
+    template = template.replace("[SKILL_3]", areas_of_expertise[2])
+    template = template.replace("[SKILL_4]", areas_of_expertise[3])
+    template = template.replace("[SKILL_5]", areas_of_expertise[4])
+    template = template.replace("[SKILL_6]", areas_of_expertise[5])
+    template = template.replace("[SKILL_7]", areas_of_expertise[6])
+    template = template.replace("[SKILL_8]", areas_of_expertise[7])
+    template = template.replace("[SKILL_9]", areas_of_expertise[8])
+    template = template.replace("[SKILL_10]", areas_of_expertise[9])
+    template = template.replace("[SKILL_11]", areas_of_expertise[10])
+    template = template.replace("[SKILL_12]", areas_of_expertise[11])
+
+    # Display the populated template
+    print("\n--- Populated Template ---\n")
+    print(template)
+
+    current_date = datetime.now().strftime("%Y-%m-%d")
+        # Save the template to a text file
+    filename_typ = f"Tailored_Resume_{current_date}_{role}.typ"
+    filename = filename_typ
+    with open(filename, "w", encoding="utf-8") as file:
+        file.write(template)
     current_date = datetime.now().strftime("%Y-%m-%d")
     filename_typ = f"Tailored_Resume_{current_date}_{role}.typ"
     with open(filename_typ, "w", encoding="utf-8") as file:
