@@ -1,5 +1,6 @@
-streamlit 
-anthropic 
+streamlit
+anthropic
 typst
 PyPDF2
 pydantic
+FPDF

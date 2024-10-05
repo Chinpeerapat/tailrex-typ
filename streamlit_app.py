@@ -5,6 +5,9 @@ from datetime import datetime
 import typst
 import PyPDF2
 from io import BytesIO
+from fpdf import FPDF
+import logging
+
 
 # Set page configuration
 st.set_page_config(
@@ -99,7 +102,7 @@ Bachelor of Accounting (International Program)
 # Text area for Job Description
 st.header("Job Title")
 role = st.text_area("Enter the job title here:", height=200, value="""head of operations"""),
-st.header("Job Description")
+st.header("Job Description") 
 job_description = st.text_area("Enter the job description here:", height=400, value="""About the job
 Job Description:
 
@@ -127,11 +130,9 @@ Strong problem-solving skills and the ability to make sound decisions under pres
 # Button to generate tailored resume
 if st.button("Generate Tailored Resume"):
     with st.spinner("Generating tailored resume..."):
-        try:
-            # Initialize Anthropic client
             client = anthropic.Anthropic(
                 api_key=api_key
-            )
+            ) 
             message = client.messages.create(
             model="claude-3-5-sonnet-20240620",
             max_tokens=8192,
@@ -201,34 +202,61 @@ if st.button("Generate Tailored Resume"):
 )
             print(message.content)
             # Extract the content
-            tailored_content = message.content
+            tailored_content = message.content  # Extract content
 
-            # Parse the JSON content
-            data = json.loads(tailored_content)
+# Check if tailored_content is a list and get the first element
+if isinstance(tailored_content, list) and len(tailored_content) > 0:
+    tailored_content = tailored_content[0]  # Get the first element which should be TextBlock
 
-            # Display the parsed data (optional)
-            st.subheader("Generated Content")
-            st.json(data)
+# Check if tailored_content is a TextBlock object and extract its text attribute
+if hasattr(tailored_content, 'text'):
+    json_string = tailored_content.text  # Extract the actual JSON string
+
+    # Ensure json_string is a string before attempting to parse it
+    if isinstance(json_string, str):
+        # Parse the JSON content
+        try:
+            data = json.loads(json_string)
+            print("JSON data successfully parsed.")
+        except json.JSONDecodeError as e:
+            print("Failed to parse JSON:", e)
+            data = None
+else:
+    print("Error: tailored_content does not contain valid JSON data.")
+
+# Verify the parsed data (Optional)
+if data:
+    print("\n--- Profile Summary ---")
+    print(data['profile_summary'])
+
+    print("\n--- Key Achievements ---")
+    for idx, achievement in enumerate(data['key_achievements'], 1):
+        print(f"{idx}. {achievement}")
+
+    print("\n--- Areas of Expertise ---")
+    for idx, skill in enumerate(data['areas_of_expertise'], 1):
+        print(f"{idx}. {skill}") 
 
             # Extract data
-            profile_summary = data.get('profile_summary', '')
-            key_achievements = data.get('key_achievements', [])
-            areas_of_expertise = data.get('areas_of_expertise', [])
+        profile_summary = data.get('profile_summary', "") 
+        key_achievements = data.get('key_achievements', [])
+        areas_of_expertise = data.get('areas_of_expertise', [])
 
             # Ensure exactly 3 key achievements
-            if len(key_achievements) < 3:
-                key_achievements += [""] * (3 - len(key_achievements))
-            elif len(key_achievements) > 3:
-                key_achievements = key_achievements[:3]
+        if len(key_achievements) < 3:
+            key_achievements += [""] * (3 - len(key_achievements))
+        elif len(key_achievements) > 3:
+
+            key_achievements = key_achievements[:3]
 
             # Ensure exactly 12 areas of expertise
             if len(areas_of_expertise) < 12:
                 areas_of_expertise += [""] * (12 - len(areas_of_expertise))
             elif len(areas_of_expertise) > 12:
                 areas_of_expertise = areas_of_expertise[:12]
-
+                st.json(data)
             # Define the Typst template with placeholders
-            template = f"""#set text(font: "inter",size: 8.5pt, hyphenate: true, ligatures: false, weight: "regular")
+            template = f"""#set text(font: "inter",size: 8.5pt, hyphenate: true, ligatures: false, weight: "regular") 
 #set page(margin: (x: 0.9cm, y: 0.9cm))
 #set par(justify: true, leading: 0.7em,linebreaks: "optimized")
 #set block(below: 1.1em)
@@ -324,16 +352,15 @@ Bachelor of Accounting (International Program).strip"""()
             with open(output_pdf, 'rb') as pdf_file:
                 pdf_bytes = pdf_file.read()
 
-            # Provide download links
-            st.success("Resume generated successfully!")
-
-            # Display the PDF in the app
-            st.subheader("Generated Resume")
-            st.download_button(
-                label="Download PDF",
-                data=pdf_bytes,
-                file_name=output_pdf,
-                mime="application/pdf")
-
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
+            if pdf_bytes:
+                # Display subheader and download button
+                st.subheader("Generated Resume")
+                st.download_button(
+                    label="Download PDF",
+                    data=pdf_bytes,
+                    file_name=f"Tailored_Resume_{current_date}_{role}.pdf",
+                    mime="application/pdf"
+                )
+            except Exception as e:
+            logging.error("An error occurred while generating the resume", exc_info=True)
+            st.error(f"An error occurred while generating the resume: {e}")
