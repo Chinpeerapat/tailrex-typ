@@ -360,25 +360,53 @@ if st.button("Generate Tailored Resume"):
                     filename = filename_typ
                     with open(filename, "w", encoding="utf-8") as file:
                         file.write(template)
+                    def generate_resume(current_date, role):
+                        try:
+                            # Define the output PDF filename
+                            output_pdf = f"Tailored_Resume_{current_date}_{role}.pdf"
+                            
+                            # Compile the Typst document
+                            typst.compile(
+                                f"Tailored_Resume_{current_date}_{role}.typ",
+                                font_paths=["/fonts/ttf"],  # Adjust the path if necessary
+                                output=output_pdf
+                            )
+                            
+                        except Exception as e:
+                            # Display an error message if compilation fails
+                            st.error(f"Typst compilation failed: {e}")
+                            st.stop()  # Stop further execution of the app
 
-                            # Compile Typst to PDF
-                    output_pdf = f"""Tailored_Resume_{current_date}_{role}.pdf"""
-                    try:
-                    # Assuming default fonts; adjust 'font_paths' if custom fonts are needed
-                        typst.compile(f"""Tailored_Resume_{current_date}_{role}.typ""", font_paths=["/fonts/ttf"], output=f"""Tailored_Resume_{current_date}_{role}.pdf""")
-                    except Exception as e:output_pdf
-                    st.error(f"Typst compilation failed: {e}")
-                    st.stop()
+                        # Read the generated PDF file
+                        try:
+                            with open(output_pdf, 'rb') as pdf_file:
+                                pdf_bytes = pdf_file.read()
+                        except FileNotFoundError:
+                            st.error("The compiled PDF was not found.")
+                            st.stop()
+                        except Exception as e:
+                            st.error(f"An error occurred while reading the PDF: {e}")
+                            st.stop()
 
-                # Read the generated PDF file
-                with open(output_pdf, 'rb') as pdf_file:
-                    pdf_bytes = pdf_file.read()
+                        if pdf_bytes:
+                            # Display subheader and download button
+                            st.subheader("Generated Resume")
+                            st.download_button(
+                                label="Download PDF",
+                                data=pdf_bytes,
+                                file_name=output_pdf,
+                                mime="application/pdf"
+                            )
+                        else:
+                            st.warning("The generated PDF is empty.")
 
-                if pdf_bytes:
-                                # Display subheader and download button
-                        st.subheader("Generated Resume")
-                        st.download_button(
-                            label="Download PDF",
-                            data=pdf_bytes,
-                            file_name=f"""Tailored_Resume_{current_date}_{role}.pdf""",
-                            mime="application/pdf")
+                    # Example usage within the Streamlit app
+                    if __name__ == "__main__":
+                        st.title("Resume Generator")
+                        
+                        # Input fields for current date and role
+                        current_date = st.text_input("Enter Current Date (e.g., 2024-10-05):", value="2024-10-05")
+                        role = st.text_input("Enter Role (e.g., Software Engineer):", value="Software Engineer")
+                        
+                        if st.button("Generate Resume"):
+                            generate_resume(current_date, role)
