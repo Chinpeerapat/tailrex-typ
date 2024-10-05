@@ -2,3 +2,4 @@ streamlit
 anthropic 
 typst
 PyPDF2
+pydantic

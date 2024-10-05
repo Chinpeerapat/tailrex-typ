@@ -130,9 +130,11 @@ if st.button("Generate Tailored Resume"):
             client = anthropic.Anthropic(
                 api_key=api_key
             )
-
-            # Create the message
-            prompt = f"""You are an AI assistant tasked with analyzing a resume and a job description to create customized content for a job application. Your goal is to provide truthful and relevant information based on the given resume while tailoring it to the specific job requirements.
+            message = client.messages.create(
+            model="claude-3-5-sonnet-20240620",
+            max_tokens=8192,
+            temperature=0.2,
+            message = [ f"""You are an AI assistant tasked with analyzing a resume and a job description to create customized content for a job application. Your goal is to provide truthful and relevant information based on the given resume while tailoring it to the specific job requirements.
 
 First, carefully read and analyze the following documents:
 
@@ -184,12 +186,7 @@ Present your analysis in JSON format with the following schema:
 }}
 
 Remember to provide only truthful information that can be referenced from or inferred from the original resume. Ensure that all content is tailored to match the requirements specified in the job description."""
-
-            response = client.completions.create(
-                model="claude-3-5-sonnet-20240620",
-                max_tokens=8192,
-                temperature=0,
-                prompt=anthropic.HUMAN_PROMPT + prompt + anthropic.AI_PROMPT
+                ]
             )
 
             # Extract the content
@@ -308,7 +305,7 @@ Bachelor of Accounting (International Program)
             output_pdf = f"Tailored_Resume_{current_date}_{role}.pdf"
             try:
                 # Assuming default fonts; adjust 'font_paths' if custom fonts are needed
-                typst.compile(filename_typ, output=output_pdf)
+                typst.compile(filename_typ, font_path = ["/fonts/ttf"], output=output_pdf)
             except Exception as e:
                 st.error(f"Typst compilation failed: {e}")
                 st.stop()
@@ -334,7 +331,7 @@ Bachelor of Accounting (International Program)
                 typ_bytes = typ_file.read()
 
             st.download_button(
-                label="Download Typst File",
+                label="Download PDF File",
                 data=typ_bytes,
                 file_name=filename_typ,
                 mime="text/plain"
