@@ -292,7 +292,7 @@ peerapat.chiaprasert@gmail.com |
 == EDUCATION
 #chiline()
 *Thammasat University* #h(1fr) Jun 2011 -- Dec 2014 \\
-Bachelor of Accounting (International Program).strip()
+Bachelor of Accounting (International Program).strip"""()
 
 
             # Save the template to a temporary .typ file
