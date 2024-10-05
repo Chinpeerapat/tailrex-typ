@@ -341,7 +341,7 @@ peerapat.chiaprasert@gmail.com |
     output_pdf = f"Tailored_Resume_{current_date}_{role}.pdf"
     try:
         # Assuming default fonts; adjust 'font_paths' if custom fonts are needed
-        typst.compile(filename_typ, font_path="https://drive.google.com/drive/folders/1AA-bWXD2uA5INEjC89qRaO4LkAXZ4uWG?usp=sharing", output=output_pdf)
+        typst.compile(filename_typ, font_paths=["/fonts/ttf"], output=output_pdf)
     except Exception as e:
         st.error(f"Typst compilation failed: {e}")
         st.stop()
