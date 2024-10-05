@@ -330,7 +330,7 @@ peerapat.chiaprasert@gmail.com |
 #chiline()
             *Thammasat University* #h(1fr) Jun 2011 -- Dec 2014 \\
             Bachelor of Accounting (International Program)
-            """
+            """.strip()
             # Save the template to a temporary .typ file
     template = template.replace("[PROFILE_SUMMARY]", profile_summary)
     template = template.replace("[SUMMARY_POINT_1]", key_achievements[0])
@@ -359,10 +359,6 @@ peerapat.chiaprasert@gmail.com |
     filename_typ = f"Tailored_Resume_{current_date}_{role}.typ"
     filename = filename_typ
     with open(filename, "w", encoding="utf-8") as file:
-        file.write(template)
-    current_date = datetime.now().strftime("%Y-%m-%d")
-    filename_typ = f"Tailored_Resume_{current_date}_{role}.typ"
-    with open(filename_typ, "w", encoding="utf-8") as file:
         file.write(template)
 
             # Compile Typst to PDF
