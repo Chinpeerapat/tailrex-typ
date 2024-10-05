@@ -136,60 +136,70 @@ if st.button("Generate Tailored Resume"):
             model="claude-3-5-sonnet-20240620",
             max_tokens=8192,
             temperature=0.2,
-            messages = [ f"""You are an AI assistant tasked with analyzing a resume and a job description to create customized content for a job application. Your goal is to provide truthful and relevant information based on the given resume while tailoring it to the specific job requirements.
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                         "type": "text",
+                         "text":  f"""You are an AI assistant tasked with analyzing a resume and a job description to create customized content for a job application. Your goal is to provide truthful and relevant information based on the given resume while tailoring it to the specific job requirements.
 
-First, carefully read and analyze the following documents:
+                First, carefully read and analyze the following documents:
 
-<resume>
-{original_resume}
-</resume>
+                <resume>
+                {original_resume}
+                </resume>
 
-<job_description>
-{job_description}
-</job_description>
+                <job_description>
+                {job_description}
+                </job_description>
 
-After analyzing both documents, you will create customized content in three parts:
+                After analyzing both documents, you will create customized content in three parts:
 
-1. Profile Summary:
-Create a 2-3 sentence statement that explains the candidate's years of experience, industry expertise, and highlights the most relevant skills for the job. Ensure that all information is truthful and can be inferred from the original resume. Tailor this summary to match the requirements in the job description.
+                1. Profile Summary:
+                Create a 2-3 sentence statement that explains the candidate's years of experience, industry expertise, and highlights the most relevant skills for the job. Ensure that all information is truthful and can be inferred from the original resume. Tailor this summary to match the requirements in the job description.
 
-2. Key Achievements:
-List 3 bullet points, each showing an achievement from past experience that provides solid evidence for the profile summary. These achievements should be directly taken or reasonably inferred from the resume and should be relevant to the job description.
+                2. Key Achievements:
+                List 3 bullet points, each showing an achievement from past experience that provides solid evidence for the profile summary. These achievements should be directly taken or reasonably inferred from the resume and should be relevant to the job description.
 
-3. Areas of Expertise:
-Provide a list of 12 skills that are most relevant to the job description. These skills should be mentioned in or inferred from the resume and align closely with the requirements listed in the job description.
+                3. Areas of Expertise:
+                Provide a list of 12 skills that are most relevant to the job description. These skills should be mentioned in or inferred from the resume and align closely with the requirements listed in the job description.
 
-Present your analysis in JSON format with the following schema:
-{{
-  "profile_summary": {{
-    "type": "string",
-    "description": "A brief summary of the individual's professional background and skills."
-  }},
-  "key_achievements": {{
-    "type": "array",
-    "description": "A list of key achievements highlighting significant accomplishments.",
-    "items": {{
-      "type": "string",
-      "description": "A single key achievement."
-    }},
-    "minItems": 1,
-    "uniqueItems": true
-  }},
-  "areas_of_expertise": {{
-    "type": "array",
-    "description": "A list of areas where the individual has specialized expertise.",
-    "items": {{
-      "type": "string",
-      "description": "A single area of expertise."
-    }},
-    "minItems": 1,
-    "uniqueItems": true
-  }}
-}}
+                Present your analysis in JSON format with the following schema:
+                {{
+                "profile_summary": {{
+                    "type": "string",
+                    "description": "A brief summary of the individual's professional background and skills."
+                }},
+                "key_achievements": {{
+                    "type": "array",
+                    "description": "A list of key achievements highlighting significant accomplishments.",
+                    "items": {{
+                    "type": "string",
+                    "description": "A single key achievement."
+                    }},
+                    "minItems": 1,
+                    "uniqueItems": true
+                }},
+                "areas_of_expertise": {{
+                    "type": "array",
+                    "description": "A list of areas where the individual has specialized expertise.",
+                    "items": {{
+                    "type": "string",
+                    "description": "A single area of expertise."
+                    }},
+                    "minItems": 1,
+                    "uniqueItems": true
+                }}
+                }}
 
-Remember to provide only truthful information that can be referenced from or inferred from the original resume. Ensure that all content is tailored to match the requirements specified in the job description."""
-                ]
-            )
+                Remember to provide only truthful information that can be referenced from or inferred from the original resume. Ensure that all content is tailored to match the requirements specified in the job description. """
+                }
+            ]
+        }
+    ]
+)
+            print(message.content)
             # Extract the content
             tailored_content = message.content
 
