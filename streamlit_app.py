@@ -267,7 +267,7 @@ if st.button("Generate Tailored Resume"):
                 #show heading.where(level: 3): set text(fill: blue,font: "inter")
                 #align(center)[
                 = Peerapat Chiaprasert (Chin)
-                peerapat.chiaprasert@gmail.com |
+                peerapat.chiaprasert@\gmail.com |
                 #link("https://linkedin.com/in/chpeerapat")[linkedin.com/in/chpeerapat] |
                 (+66)86-624-6630 | Bangkok, Thailand]
                 == PROFILE SUMMARY
