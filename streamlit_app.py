@@ -190,7 +190,6 @@ Present your analysis in JSON format with the following schema:
 Remember to provide only truthful information that can be referenced from or inferred from the original resume. Ensure that all content is tailored to match the requirements specified in the job description."""
                 ]
             )
-
             # Extract the content
             tailored_content = message.content
 
@@ -293,8 +292,8 @@ peerapat.chiaprasert@gmail.com |
 == EDUCATION
 #chiline()
 *Thammasat University* #h(1fr) Jun 2011 -- Dec 2014 \\
-Bachelor of Accounting (International Program)
-"""
+Bachelor of Accounting (International Program).strip()
+
 
             # Save the template to a temporary .typ file
             current_date = datetime.now().strftime("%Y-%m-%d")
