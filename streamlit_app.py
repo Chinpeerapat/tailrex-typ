@@ -364,17 +364,17 @@ if st.button("Generate Tailored Resume"):
                             # Compile Typst to PDF
                     output_pdf = f"Tailored_Resume_{current_date}_{role}.pdf"
                     try:
-                        # Assuming default fonts; adjust 'font_paths' if custom fonts are needed
-                        typst.compile(filename_typ, font_paths=["/fonts/ttf"], output=output_pdf)
-                    except Exception as e:
-                        st.error(f"Typst compilation failed: {e}")
-                        st.stop()
+                    # Assuming default fonts; adjust 'font_paths' if custom fonts are needed
+                        typst.compile(f"Tailored_Resume_{current_date}_{role}.typ", font_paths=["/fonts/ttf"], output=f"Tailored_Resume_{current_date}_{role}.pdf")
+                    except Exception as e:output_pdf
+                    st.error(f"Typst compilation failed: {e}")
+                    st.stop()
 
-                    # Read the generated PDF file
-                    with open(output_pdf, 'rb') as pdf_file:
-                        pdf_bytes = pdf_file.read()
+                # Read the generated PDF file
+                with open(output_pdf, 'rb') as pdf_file:
+                    pdf_bytes = pdf_file.read()
 
-                    if pdf_bytes:
+                if pdf_bytes:
                                 # Display subheader and download button
                         st.subheader("Generated Resume")
                         st.download_button(
