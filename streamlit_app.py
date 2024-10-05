@@ -190,7 +190,7 @@ Remember to provide only truthful information that can be referenced from or inf
             )
 
             # Extract the content
-            tailored_content = response.completion
+            tailored_content = message.content
 
             # Parse the JSON content
             data = json.loads(tailored_content)
