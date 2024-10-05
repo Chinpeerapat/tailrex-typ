@@ -2,37 +2,14 @@ import streamlit as st
 import anthropic
 import json
 from datetime import datetime
+import os
 import typst
 import PyPDF2
-from io import BytesIO
-from fpdf import FPDF
-import logging
 
-
-# Set page configuration
-st.set_page_config(
-    page_title="Tailored Resume Generator",
-    layout="wide",
-)
-
-# Title of the app
-st.title("Tailored Resume Generator")
-
-# Sidebar for API Key (optional if using secrets)
-# You can choose to use Streamlit Secrets instead for better security
-# api_key = st.sidebar.text_input("Anthropic API Key", type="password")
-
-# Alternatively, retrieve API key from secrets
-api_key = st.secrets["anthropic"]["api_key"]
-
-# File uploader for Original Resume (optional)
-# If you want to allow users to upload their resume instead of using a predefined one
-# uploaded_resume = st.file_uploader("Upload Your Resume (Text)", type=["txt", "pdf"])
-
-# Text area for Original Resume
-st.header("Original Resume")
-original_resume = st.text_area("Enter your original resume content here:", height=400, value="""= Peerapat Chiaprasert (Chin)
-peerapat.chiaprasert@gmail.com |
+# --- Your Original Resume (replace with your actual content) ---
+original_resume = """
+= Peerapat Chiaprasert (Chin)
+peerapat.chiaprasert\@gmail.com |
 #link("https://linkedin.com/in/chpeerapat")[linkedin.com/in/chpeerapat] |
 (+66)86-624-6630 | Bangkok, Thailand]
 == PROFILE SUMMARY
@@ -67,14 +44,14 @@ peerapat.chiaprasert@gmail.com |
 ]
 == WORK EXPERIENCE
 #chiline()
-*TiffinLabs*#h(1fr) Mar 2022 -- Oct 2023 \\
+*TiffinLabs*#h(1fr) Mar 2022 -- Oct 2023 \
 *Country General Manager*
 - Expanded TiffinLabs' delivery-centric brand to 100 storefronts in Thailand. Led and developed the entire business team, overseeing marketing, business development, and operations. Streamlined processes for efficient growth and market penetration.
 - Developed product value propositions for 7 delivery-focused food brands. Defined brand roadmaps ensuring product-market fit and established processes to capture evolving trends. Continuously refined offerings based on consumer feedback.
 - Boosted GMV by 20% monthly through strategic marketing collaborations with delivery platforms. Maximized NPD sales by aligning promotional efforts and implementing regular product enhancements through agile methodology.
 - Achieved 15% COGS reduction by initiating fulfillment partnerships with distributors. Negotiated favorable terms to meet target pricing and quality standards. Improved sourcing processes, resulting in faster procurement and increased efficiency.
 
-*Grab*#h(1fr) Jun 2017 -- Feb 2022 \\
+*Grab*#h(1fr) Jun 2017 -- Feb 2022 \
 *Head, GrabKitchen* (2019-2022)
 - Established Thailand's largest cloud kitchen network, GrabKitchen, developing an asset-lite model. Secured partnership with top F&B company CRG, creating a scalable, profitable business model for long-term growth.
 - Grew GMV by average 25% per month and achieved 4x ROI through strategic marketing campaigns. Managed thematic promotions, partnerships, and Joint Business Plans to drive customer engagement and increase platform usage.
@@ -85,328 +62,237 @@ peerapat.chiaprasert@gmail.com |
 - Developed e-commerce strategies for leading F&B brands. Designed tailored solutions to launch and grow online channel for major brands such as MK, Starbucks, and CRG, driving online growth and enhancing market competitiveness
 - Built and mentored high-performing teams across various functions and locations.  Oversaw 100+ staff members, including 7 direct reports, fostering a culture of excellence and continuous improvement throughout the organization.
 
-*Ipsos Business Consulting* #h(1fr) Jul 2016 -- May 2017 \\
+*Ipsos Business Consulting*#h(1fr) Jul 2016 -- May 2017 \
 *Associate Consultant*
 - Developed e-payment business model and identified strategic partners for successful launch. Utilized insightful market data to shortlist potential collaborators, ensuring a strong foundation for the new venture.
 - Designed go-to-market strategy for Thai financial institution's e-commerce launch. Conducted comprehensive market research and analysis to inform strategic decisions and optimize market entry approach.
-*EY (Ernst & Young)* #h(1fr) Feb 2015 -- Jun 2016 \\
+*EY (Ernst & Young)* #h(1fr) Feb 2015 -- Jun 2016 \
 *Consultant*
 - Created costing model to pinpoint service costs and address profitability issues for Ministry of Public Health hospitals nationwide. Analyzed data to identify root causes and areas for financial improvement and efficiency gains.
 - Enhanced efficiency for listed manufacturing company through business process improvement. Recommended new flow charts, SOPs, and integrated ERP systems to streamline operations and boost overall productivity.
 == EDUCATION
 #chiline()
-*Thammasat University* #h(1fr) Jun 2011 -- Dec 2014 \\
+*Thammasat University* #h(1fr) Jun 2011 -- Dec 2014 \
 Bachelor of Accounting (International Program)
-""")
+"""
 
-# Text area for Job Description
-st.header("Job Title")
-role = st.text_area("Enter the job title here:", height=200, value="""head of operations"""),
-st.header("Job Description") 
-job_description = st.text_area("Enter the job description here:", height=400, value="""About the job
-Job Description:
+# --- Anthropic API Setup ---
+client = anthropic.Anthropic(api_key="ANTHROPIC_API_KEY") 
 
-Lead the end-to-end business development process for new ventures, including market research, feasibility studies, and competitive analysis.
-Develop and implement strategic business plans that ensure the successful launch, growth, and profitability of new businesses (laundry, restaurants, market business, and more).
-Oversee day-to-day operations for the new businesses, ensuring operational efficiency, cost-effectiveness, and high-quality service delivery.
-Identify new market opportunities and trends to continuously innovate and expand the company's business portfolio.
-Build and maintain strong relationships with external partners, vendors, and industry experts to drive collaboration and growth.
-Manage financial performance by setting budgets, forecasts, and financial models to ensure profitability and scalability.
-Collaborate with cross-functional teams (marketing, operations, finance, etc.) to ensure smooth business integration and alignment with corporate goals.
-Monitor key performance indicators (KPIs) and make data-driven decisions to optimize business performance.
-Provide leadership and mentorship to team members to foster a culture of innovation, collaboration, and continuous improvement.
+# --- Typst Font Path Setup ---
+typst_font_path = "/fonts/ttf"  
 
-Qualifications:
+# --- Function to tailor the resume ---
+def tailor_resume(resume_text, job_description, role):
+    try:
+        message=client.messages.create( 
+                model="claude-3-5-sonnet-20240620",
+                max_tokens=8192,
+                temperature=0.2,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "text",
+                                "text": f"""You are an AI assistant tasked with analyzing a resume and a job description to create customized content for a job application. Your goal is to provide truthful and relevant information based solely on the given resume while tailoring it to the specific job requirements. It is crucial that you do not invent or add any information that is not present in or cannot be directly inferred from the original resume. Stick closely to the content and tone of the original document.
 
-Bachelor's degree in Business Administration, Management, or a related field (Master's degree preferred).
-Minimum of 8-10 years of experience in business development, with a strong focus on launching and managing new businesses.
-Proven experience in both operational and strategic roles, ideally in retail, food and beverage, services, or market-related industries.
-Strong business acumen with the ability to analyze market trends, financial data, and competitive landscapes.
-Excellent leadership and team management skills, with a proven track record of leading cross-functional teams.
-Strong interpersonal and communication skills, both verbal and written, with the ability to build strong relationships with stakeholders at all levels.
-Highly adaptable and capable of handling multiple projects simultaneously in a fast-paced environment.
-Strong problem-solving skills and the ability to make sound decisions under pressure.""")
+            First, carefully read and analyze the following documents:
 
-# Button to generate tailored resume
-if st.button("Generate Tailored Resume"):
-    with st.spinner("Generating tailored resume..."):
-            client = anthropic.Anthropic(
-                api_key=api_key
-            ) 
-            message = client.messages.create(
-            model="claude-3-5-sonnet-20240620",
-            max_tokens=8192,
-            temperature=0.2,
-            messages=[
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                         "type": "text",
-                         "text":  f"""You are an AI assistant tasked with analyzing a resume and a job description to create customized content for a job application. Your goal is to provide truthful and relevant information based on the given resume while tailoring it to the specific job requirements.
+            <resume>
+            {original_resume}
+            </resume>
 
-                                    First, carefully read and analyze the following documents:
+            <job_description>
+            {job_description}
+            </job_description>
 
-                                    <resume>
-                                    {original_resume}
-                                    </resume>
+            After analyzing both documents, you will create customized content in three parts:
 
-                                    <job_description>
-                                    {job_description}
-                                    </job_description>
+            1. Profile Summary:
+            Create a 2-3 sentence statement that explains the candidate's years of experience, industry expertise, and highlights the most relevant skills for the job. Ensure that all information is truthful and can be directly referenced from the original resume. Tailor this summary to match the requirements in the job description.
 
-                                    After analyzing both documents, you will create customized content in three parts:
+            2. Key Achievements:
+            List 3 bullet points, each showing an achievement from past experience that provides solid evidence for the profile summary. These achievements should be directly taken from the resume and should be relevant to the job description. Use exact phrases from the resume whenever possible.
 
-                                    1. Profile Summary:
-                                    Create a 2-3 sentence statement that explains the candidate's years of experience, industry expertise, and highlights the most relevant skills for the job. Ensure that all information is truthful and can be inferred from the original resume. Tailor this summary to match the requirements in the job description.
+            3. Areas of Expertise:
+            Provide a list of 12 skills that are most relevant to the job description. These skills should be explicitly mentioned in the resume and align closely with the requirements listed in the job description. Prioritize using exact terms from the original resume.
 
-                                    2. Key Achievements:
-                                    List 3 bullet points, each showing an achievement from past experience that provides solid evidence for the profile summary. These achievements should be directly taken or reasonably inferred from the resume and should be relevant to the job description.
+            After generating each section, compare it to the original resume and ensure that at least 90% of the content can be directly traced back to the original document. Only make minimal inferences when absolutely necessary. If you must infer information, it should be a logical and direct conclusion from explicitly stated facts in the resume.
 
-                                    3. Areas of Expertise:
-                                    Provide a list of 12 skills that are most relevant to the job description. These skills should be mentioned in or inferred from the resume and align closely with the requirements listed in the job description.
+            Present your analysis in JSON format with the following schema:
+            {{
+            "profile_summary": {{
+                "type": "string",
+                "description": "A brief summary of the individual's professional background and skills."
+            }},
+            "key_achievements": {{
+                "type": "array",
+                "description": "A list of key achievements highlighting significant accomplishments.",
+                "items": {{
+                "type": "string",
+                "description": "A single key achievement."
+                }},
+                "minItems": 1,
+                "uniqueItems": true
+            }},
+            "areas_of_expertise": {{
+                "type": "array",
+                "description": "A list of areas where the individual has specialized expertise.",
+                "items": {{
+                "type": "string",
+                "description": "A single area of expertise."
+                }},
+                "minItems": 1,
+                "uniqueItems": true
+            }}
+            }}
 
-                                    Present your analysis in JSON format with the following schema:
-                                    {{
-                                    "profile_summary": {{
-                                        "type": "string",
-                                        "description": "A brief summary of the individual's professional background and skills."
-                                    }},
-                                    "key_achievements": {{
-                                        "type": "array",
-                                        "description": "A list of key achievements highlighting significant accomplishments.",
-                                        "items": {{
-                                        "type": "string",
-                                        "description": "A single key achievement."
-                                        }},
-                                        "minItems": 1,
-                                        "uniqueItems": true
-                                    }},
-                                    "areas_of_expertise": {{
-                                        "type": "array",
-                                        "description": "A list of areas where the individual has specialized expertise.",
-                                        "items": {{
-                                        "type": "string",
-                                        "description": "A single area of expertise."
-                                        }},
-                                        "minItems": 1,
-                                        "uniqueItems": true
-                                    }}
-                                    }}
+            After completing the analysis, review each point in your output and provide a brief justification for its inclusion by referencing the specific part of the original resume it came from. This justification should be included as an additional field in the JSON output.
 
-                                    Remember to provide only truthful information that can be referenced from or inferred from the original resume. Ensure that all content is tailored to match the requirements specified in the job description. """
-                                    }
-                                ]
+            Remember to provide only truthful information that can be referenced from or minimally inferred from the original resume. Ensure that all content is tailored to match the requirements specified in the job description while maintaining a high degree of fidelity to the original resume."""
                             }
                         ]
-                    )
-            print(message.content)
-            # Extract the content
-            tailored_content = (message.content)  # Extract content
-
-# Check if tailored_content is a list and get the first element
-            if isinstance(tailored_content, list) and len(tailored_content) > 0:
-                tailored_content = tailored_content[0]  # Get the first element which should be TextBlock
-
-# Check if tailored_content is a TextBlock object and extract its text attribute
-            if hasattr(tailored_content, 'text'):
-                json_string = tailored_content.text  # Extract the actual JSON string
-
-    # Ensure json_string is a string before attempting to parse it
-            if isinstance(json_string, str):
-        # Parse the JSON content
-                try:
-                    data = json.loads(json_string)
-                    print("JSON data successfully parsed.")
-                except json.JSONDecodeError as e:
-                    print("Failed to parse JSON:", e)
-                    data = None
-                else:
-                    print("Error: tailored_content does not contain valid JSON data.")
-
-                # Verify the parsed data (Optional)
-                if data:
-                    print("\n--- Profile Summary ---")
-                    print(data['profile_summary'])
-
-                    # print("\n--- Key Achievements ---")
-                    # for idx, achievement in enumerate(data['key_achievements'], 1):
-                    #     print(f"{idx}. {achievement}")
-
-                    print("\n--- Areas of Expertise ---")
-                    for idx, skill in enumerate(data['areas_of_expertise'], 1):
-                        print(f"{idx}. {skill}") 
-
-                            # Extract data
-                        profile_summary = data.get('profile_summary', "") 
-                        key_achievements = data.get('key_achievements', []) 
-                        areas_of_expertise = data.get('areas_of_expertise', []) 
-
-                            # Ensure exactly 3 key achievements
-                        if len(key_achievements) < 3:
-                                key_achievements += [""] * (3 - len(key_achievements))
-                        elif len(key_achievements) > 3:
-                                key_achievements = key_achievements[:3]
-
-                            # Ensure exactly 12 areas of expertise
-                        if len(areas_of_expertise) < 12: 
-                                areas_of_expertise += [""] * (12 - len(areas_of_expertise)) 
-                        elif len(areas_of_expertise) > 12: 
-                                areas_of_expertise = areas_of_expertise[:12]
-                                st.json(data)
-                            # Define the Typst template with placeholders 
-                    template = """#set text(font: "inter",size: 8.5pt, hyphenate: true, ligatures: false, weight: "regular") 
-                #set page(margin: (x: 0.9cm, y: 0.9cm))
-                #set par(justify: true, leading: 0.7em,linebreaks: "optimized")
-                #set block(below: 1.1em)
-                #set list(tight: true, spacing: auto)
-                #let chiline() = {{v(-3pt); line(length: 100%); v(-5pt)}}
-                #set list(marker: [•])
-                #show heading.where(level: 1): set text(fill: blue,font: "inter")
-                #show heading.where(level: 2): set text(fill: blue,font: "inter")
-                #show heading.where(level: 3): set text(fill: blue,font: "inter")
-                #align(center)[
-                = Peerapat Chiaprasert (Chin)
-                peerapat.chiaprasert@\gmail.com |
-                #link("https://linkedin.com/in/chpeerapat")[linkedin.com/in/chpeerapat] |
-                (+66)86-624-6630 | Bangkok, Thailand]
-                == PROFILE SUMMARY
-                #chiline()
-                *{profile_summary}*
-                - {key_achievements[0]}
-                - {key_achievements[1]}
-                - {key_achievements[2]}
-                == AREAS OF EXPERTISE
-                #chiline()
-                #columns(3)[
-                #align(center)[
-                    {areas_of_expertise[0]}\\
-                    {areas_of_expertise[1]}\\
-                    {areas_of_expertise[2]}\\
-                    {areas_of_expertise[3]}
+                    }
                 ]
-                #colbreak()
-                #align(center)[
-                    {areas_of_expertise[4]}\\
-                    {areas_of_expertise[5]}\\
-                    {areas_of_expertise[6]}\\
-                    {areas_of_expertise[7]}
-                ]
-                #colbreak()
-                #align(center) [
-                    {areas_of_expertise[8]}\\
-                    {areas_of_expertise[9]}\\
-                    {areas_of_expertise[10]}\\
-                    {areas_of_expertise[11]}
-                ]
-                ]
-                == WORK EXPERIENCE
-                #chiline()
-                *TiffinLabs*#h(1fr) Mar 2022 -- Oct 2023 \\
-                *Country General Manager*
-                - Expanded TiffinLabs' delivery-centric brand to 100 storefronts in Thailand. Led and developed the entire business team, overseeing marketing, business development, and operations. Streamlined processes for efficient growth and market penetration.
-                - Developed product value propositions for 7 delivery-focused food brands. Defined brand roadmaps ensuring product-market fit and established processes to capture evolving trends. Continuously refined offerings based on consumer feedback.
-                - Boosted GMV by 20% monthly through strategic marketing collaborations with delivery platforms. Maximized NPD sales by aligning promotional efforts and implementing regular product enhancements through agile methodology.
-                - Achieved 15% COGS reduction by initiating fulfillment partnerships with distributors. Negotiated favorable terms to meet target pricing and quality standards. Improved sourcing processes, resulting in faster procurement and increased efficiency.
-                *Grab*#h(1fr) Jun 2017 -- Feb 2022 \\
-                *Head, GrabKitchen* (2019-2022)
-                - Established Thailand's largest cloud kitchen network, GrabKitchen, developing an asset-lite model. Secured partnership with top F&B company CRG, creating a scalable, profitable business model for long-term growth.
-                - Grew GMV by average 20% per month and achieved 4x ROI through strategic marketing campaigns. Managed thematic promotions, partnerships, and Joint Business Plans to drive customer acquisition and retention .
-                - Created a data-driven model for selecting profitable expansion locations. Utilized past performance data and location-specific demand trends to calculate individual kitchen profitability and determine accurate payback periods.
-                - Managed a diverse portfolio exceeding 400 million THB in annual GMV. Oversaw 120+ F&B accounts, including street vendors, local chains, QSRs, and strategic partners, ensuring optimal selections across segments to maximize growth
-                *Operations Manager, GrabFood | Special Project Lead, GrabBike & GrabExpress* (2017-2019)
-                - Propelled GrabFood to market leadership within 8 months through strategic initiatives. Established and optimized key functions including fleet management, business development, revenue collection, and customer services.
-                - Developed e-commerce strategies for leading F&B brands. Designed tailored solutions to launch and grow online channel for major brands such as MK, Starbucks, and CRG, driving online growth and enhancing market competitiveness
-                - Built and mentored high-performing teams across various functions and locations.  Oversaw 100+ staff members, including 7 direct reports, fostering a culture of excellence and continuous improvement throughout the organization.
-                *Ipsos Business Consulting* #h(1fr) Jul 2016 -- May 2017 \\
-                *Associate Consultant*
-                - Developed e-payment business model and identified strategic partners for successful launch. Utilized insightful market data to shortlist potential collaborators, ensuring a strong foundation for the new venture.
-                - Designed go-to-market strategy for Thai financial institution's e-commerce launch. Conducted comprehensive market research and analysis to inform strategic decisions and optimize market entry approach.
-                *EY (Ernst & Young)* #h(1fr) Feb 2015 -- Jun 2016 \\
-                *Consultant*
-                - Created costing model to pinpoint service costs and address profitability issues for Ministry of Public Health hospitals nationwide. Analyzed data to identify root causes and areas for financial improvement and efficiency gains.
-                - Enhanced efficiency for listed manufacturing company through business process improvement. Recommended new flow charts, SOPs, and integrated ERP systems to streamline operations and boost overall productivity.
-                == EDUCATION
-                #chiline()
-                 *Thammasat University* #h(1fr) Jun 2011 -- Dec 2014 \\
-                Bachelor of Accounting (International Program)
-                            """.strip()
-                            # Save the template to a temporary .typ file
-                    template = template.replace("[PROFILE_SUMMARY]", profile_summary)
-                    template = template.replace("[SUMMARY_POINT_1]", key_achievements[0])
-                    template = template.replace("[SUMMARY_POINT_2]", key_achievements[1])
-                    template = template.replace("[SUMMARY_POINT_3]", key_achievements[2])
+            )
 
-                    template = template.replace("[SKILL_1]", areas_of_expertise[0])
-                    template = template.replace("[SKILL_2]", areas_of_expertise[1])
-                    template = template.replace("[SKILL_3]", areas_of_expertise[2])
-                    template = template.replace("[SKILL_4]", areas_of_expertise[3])
-                    template = template.replace("[SKILL_5]", areas_of_expertise[4])
-                    template = template.replace("[SKILL_6]", areas_of_expertise[5])
-                    template = template.replace("[SKILL_7]", areas_of_expertise[6])
-                    template = template.replace("[SKILL_8]", areas_of_expertise[7])
-                    template = template.replace("[SKILL_9]", areas_of_expertise[8])
-                    template = template.replace("[SKILL_10]", areas_of_expertise[9])
-                    template = template.replace("[SKILL_11]", areas_of_expertise[10])
-                    template = template.replace("[SKILL_12]", areas_of_expertise[11])
+            # Print the response
+        print(message.content)
 
-                    # Display the populated template
-                    print("\n--- Populated Template ---\n")
-                    print(template)
+        tailored_content = message.content[0].text if message.content else None
+        data = json.loads(tailored_content) if tailored_content else None
 
-                    current_date = datetime.now().strftime("%Y-%m-%d")
-                        # Save the template to a text file
-                    filename_typ = f"""Tailored_Resume_{current_date}_{role}.typ"""
-                    filename = filename_typ
-                    with open(filename, "w", encoding="utf-8") as file:
-                        file.write(template)
-                    def generate_resume(current_date, role):
-                        try:
-                            # Define the output PDF filename
-                            output_pdf = f"Tailored_Resume_{current_date}_{role}.pdf"
-                            
-                            # Compile the Typst document
-                            typst.compile(
-                                f"Tailored_Resume_{current_date}_{role}.typ",
-                                font_paths=["/fonts/ttf"],  # Adjust the path if necessary
-                                output=output_pdf
-                            )
-                            
-                        except Exception as e:
-                            # Display an error message if compilation fails
-                            st.error(f"Typst compilation failed: {e}")
-                            st.stop()  # Stop further execution of the app
+        if data:
+            profile_summary = data.get('profile_summary', '')
+            key_achievements = data.get('key_achievements', [])[:3]
+            areas_of_expertise = data.get('areas_of_expertise', [])[:12]
 
-                        # Read the generated PDF file
-                        try:
-                            with open(output_pdf, 'rb') as pdf_file:
-                                pdf_bytes = pdf_file.read()
-                        except FileNotFoundError:
-                            st.error("The compiled PDF was not found.")
-                            st.stop()
-                        except Exception as e:
-                            st.error(f"An error occurred while reading the PDF: {e}")
-                            st.stop()
+            # --- Typst Template Population ---
+            template = f"""
+            #set text(font: "inter",size: 8.5pt, hyphenate: true, ligatures: false, weight: "regular")
+            #set page(margin: (x: 0.9cm, y: 0.9cm))
+            #set par(justify: true, leading: 0.7em,linebreaks: "optimized")
+            #set block(below: 1.1em)
+            #set list(tight: true, spacing: auto)
+            #let chiline() = {{v(-3pt); line(length: 100%); v(-5pt)}}
+            #set list(marker: [•])
+            #show heading.where(level: 1): set text(fill: blue,font: "inter")
+            #show heading.where(level: 2): set text(fill: blue,font: "inter")
+            #show heading.where(level: 3): set text(fill: blue,font: "inter")
+            #align(center)[
+            = Peerapat Chiaprasert (Chin)
+            peerapat.chiaprasert\@gmail.com |
+            #link("https://linkedin.com/in/chpeerapat")[linkedin.com/in/chpeerapat] |
+            (+66)86-624-6630 | Bangkok, Thailand]
+            == PROFILE SUMMARY
+            #chiline()
+            *{profile_summary}*
+            - {key_achievements[0] if key_achievements else ''}
+            - {key_achievements[1] if len(key_achievements) > 1 else ''}
+            - {key_achievements[2] if len(key_achievements) > 2 else ''}
+            == AREAS OF EXPERTISE
+            #chiline()
+            #columns(3)[
+            #align(center)[
+                {areas_of_expertise[0] if areas_of_expertise else ''}\\
+                {areas_of_expertise[1] if len(areas_of_expertise) > 1 else ''}\\
+                {areas_of_expertise[2] if len(areas_of_expertise) > 2 else ''}\\
+                {areas_of_expertise[3] if len(areas_of_expertise) > 3 else ''}
+            ]
+            #colbreak()
+            #align(center)[
+                {areas_of_expertise[4] if len(areas_of_expertise) > 4 else ''}\\
+                {areas_of_expertise[5] if len(areas_of_expertise) > 5 else ''}\\
+                {areas_of_expertise[6] if len(areas_of_expertise) > 6 else ''}\\
+                {areas_of_expertise[7] if len(areas_of_expertise) > 7 else ''}
+            ]
+            #colbreak()
+            #align(center)[
+                {areas_of_expertise[8] if len(areas_of_expertise) > 8 else ''}\\
+                {areas_of_expertise[9] if len(areas_of_expertise) > 9 else ''}\\
+                {areas_of_expertise[10] if len(areas_of_expertise) > 10 else ''}\\
+                {areas_of_expertise[11] if len(areas_of_expertise) > 11 else ''}
+            ]
+            ]
+            == WORK EXPERIENCE
+            #chiline()
+            *TiffinLabs*#h(1fr) Mar 2022 -- Oct 2023 \\
+            *Country General Manager*
+            - Expanded TiffinLabs' delivery-centric brand to 100 storefronts in Thailand. Led and developed the entire business team, overseeing marketing, business development, and operations. Streamlined processes for efficient growth and market penetration.
+            - Developed product value propositions for 7 delivery-focused food brands. Defined brand roadmaps ensuring product-market fit and established processes to capture evolving trends. Continuously refined offerings based on consumer feedback.
+            - Boosted GMV by 20% monthly through strategic marketing collaborations with delivery platforms. Maximized NPD sales by aligning promotional efforts and implementing regular product enhancements through agile methodology.
+            - Achieved 15% COGS reduction by initiating fulfillment partnerships with distributors. Negotiated favorable terms to meet target pricing and quality standards. Improved sourcing processes, resulting in faster procurement and increased efficiency.
+            *Grab*#h(1fr) Jun 2017 -- Feb 2022 \\
+            *Head, GrabKitchen* (2019-2022)
+            - Established Thailand's largest cloud kitchen network, GrabKitchen, developing an asset-lite model. Secured partnership with top F&B company CRG, creating a scalable, profitable business model for long-term growth.
+            - Grew GMV by average 20% per month and achieved 4x ROI through strategic marketing campaigns. Managed thematic promotions, partnerships, and Joint Business Plans to drive customer acquisition and retention .
+            - Created a data-driven model for selecting profitable expansion locations. Utilized past performance data and location-specific demand trends to calculate individual kitchen profitability and determine accurate payback periods.
+            - Managed a diverse portfolio exceeding 400 million THB in annual GMV. Oversaw 120+ F&B accounts, including street vendors, local chains, QSRs, and strategic partners, ensuring optimal selections across segments to maximize growth
+            *Operations Manager, GrabFood | Special Project Lead, GrabBike & GrabExpress* (2017-2019)
+            - Propelled GrabFood to market leadership within 8 months through strategic initiatives. Established and optimized key functions including fleet management, business development, revenue collection, and customer services.
+            - Developed e-commerce strategies for leading F&B brands. Designed tailored solutions to launch and grow online channel for major brands such as MK, Starbucks, and CRG, driving online growth and enhancing market competitiveness
+            - Built and mentored high-performing teams across various functions and locations.  Oversaw 100+ staff members, including 7 direct reports, fostering a culture of excellence and continuous improvement throughout the organization.
+            *Ipsos Business Consulting* #h(1fr) Jul 2016 -- May 2017 \\
+            *Associate Consultant*
+            - Developed e-payment business model and identified strategic partners for successful launch. Utilized insightful market data to shortlist potential collaborators, ensuring a strong foundation for the new venture.
+            - Designed go-to-market strategy for Thai financial institution's e-commerce launch. Conducted comprehensive market research and analysis to inform strategic decisions and optimize market entry approach.
+            *EY (Ernst & Young)* #h(1fr) Feb 2015 -- Jun 2016 \\
+            *Consultant*
+            - Created costing model to pinpoint service costs and address profitability issues for Ministry of Public Health hospitals nationwide. Analyzed data to identify root causes and areas for financial improvement and efficiency gains.
+            - Enhanced efficiency for listed manufacturing company through business process improvement. Recommended new flow charts, SOPs, and integrated ERP systems to streamline operations and boost overall productivity.
+            == EDUCATION
+            #chiline()
+            *Thammasat University* #h(1fr) Jun 2011 -- Dec 2014 \\
+            Bachelor of Accounting (International Program)
+            """.strip()
 
-                        if pdf_bytes:
-                            # Display subheader and download button
-                            st.subheader("Generated Resume")
-                            st.download_button(
-                                label="Download PDF",
-                                data=pdf_bytes,
-                                file_name=output_pdf,
-                                mime="application/pdf"
-                            )
-                        else:
-                            st.warning("The generated PDF is empty.")
+            # Compile Typst to PDF
+            current_date = datetime.now().strftime("%Y-%m-%d")
+            filename_base = f"Peerapat Chiaprasert Resume-{current_date}-{role}"
+            typst_filename = filename_base + ".typ"
+            pdf_filename = filename_base + ".pdf"
 
-                    # Example usage within the Streamlit app
-                    if __name__ == "__main__":
-                        st.title("Resume Generator")
-                        
-                        # Input fields for current date and role
-                        current_date = st.text_input("Enter Current Date (e.g., 2024-10-05):", value="2024-10-05")
-                        role = st.text_input("Enter Role (e.g., Software Engineer):", value="Software Engineer")
-                        
-                        if st.button("Generate Resume"):
-                            generate_resume(current_date, role)
+            with open(typst_filename, "w", encoding="utf-8") as file:
+                file.write(template) 
+
+            typst.compile(typst_filename, font_paths=[typst_font_path], output=pdf_filename)
+
+            return template, pdf_filename  
+
+        else:
+            raise ValueError("AI analysis failed to produce valid output.")
+
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+        return None, None
+
+# --- Streamlit App ---
+st.title("AI-Powered Resume Tailor")
+
+resume_text = st.text_area("Paste Your Resume Here:", value=original_resume)
+role = st.text_input("Enter the Target Job Role:", value="e.g., Data Scientist")
+job_description = st.text_area("Paste the Job Description:")
+
+if st.button("Tailor My Resume"):
+    if resume_text and job_description and role:
+        with st.spinner("Analyzing and Tailoring..."):
+            tailored_resume_content, pdf_filename = tailor_resume(
+                resume_text, job_description, role
+            )
+
+            if tailored_resume_content and pdf_filename:
+                st.success("Resume Tailored Successfully!")
+
+                st.subheader("Tailored Resume Preview:")
+                st.write(tailored_resume_content) 
+
+                with open(pdf_filename, "rb") as f:
+                    pdf_bytes = f.read()
+                st.download_button(label="Download Tailored Resume", 
+                                   data=pdf_bytes,
+                                   file_name=pdf_filename)
+
+                os.remove(pdf_filename)
+    else:
+        st.warning("Please provide your resume, job role, and the job description.") 
