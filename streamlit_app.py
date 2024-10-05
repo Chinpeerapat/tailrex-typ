@@ -359,8 +359,4 @@ Bachelor of Accounting (International Program).strip"""()
                     label="Download PDF",
                     data=pdf_bytes,
                     file_name=f"Tailored_Resume_{current_date}_{role}.pdf",
-                    mime="application/pdf"
-                )
-            except Exception as e:
-            logging.error("An error occurred while generating the resume", exc_info=True)
-            st.error(f"An error occurred while generating the resume: {e}")
+                    mime="application/pdf")
