@@ -98,7 +98,7 @@ Bachelor of Accounting (International Program)
 
 # Text area for Job Description
 st.header("Job Title")
-role = st.text_area("Enter the job title here:"), height=200, value="""head of operations""",
+role = st.text_area("Enter the job title here:", height=200, value="""head of operations"""),
 st.header("Job Description")
 job_description = st.text_area("Enter the job description here:", height=400, value="""About the job
 Job Description:
