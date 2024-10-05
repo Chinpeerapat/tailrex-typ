@@ -145,93 +145,93 @@ if st.button("Generate Tailored Resume"):
                          "type": "text",
                          "text":  f"""You are an AI assistant tasked with analyzing a resume and a job description to create customized content for a job application. Your goal is to provide truthful and relevant information based on the given resume while tailoring it to the specific job requirements.
 
-                First, carefully read and analyze the following documents:
+                                    First, carefully read and analyze the following documents:
 
-                <resume>
-                {original_resume}
-                </resume>
+                                    <resume>
+                                    {original_resume}
+                                    </resume>
 
-                <job_description>
-                {job_description}
-                </job_description>
+                                    <job_description>
+                                    {job_description}
+                                    </job_description>
 
-                After analyzing both documents, you will create customized content in three parts:
+                                    After analyzing both documents, you will create customized content in three parts:
 
-                1. Profile Summary:
-                Create a 2-3 sentence statement that explains the candidate's years of experience, industry expertise, and highlights the most relevant skills for the job. Ensure that all information is truthful and can be inferred from the original resume. Tailor this summary to match the requirements in the job description.
+                                    1. Profile Summary:
+                                    Create a 2-3 sentence statement that explains the candidate's years of experience, industry expertise, and highlights the most relevant skills for the job. Ensure that all information is truthful and can be inferred from the original resume. Tailor this summary to match the requirements in the job description.
 
-                2. Key Achievements:
-                List 3 bullet points, each showing an achievement from past experience that provides solid evidence for the profile summary. These achievements should be directly taken or reasonably inferred from the resume and should be relevant to the job description.
+                                    2. Key Achievements:
+                                    List 3 bullet points, each showing an achievement from past experience that provides solid evidence for the profile summary. These achievements should be directly taken or reasonably inferred from the resume and should be relevant to the job description.
 
-                3. Areas of Expertise:
-                Provide a list of 12 skills that are most relevant to the job description. These skills should be mentioned in or inferred from the resume and align closely with the requirements listed in the job description.
+                                    3. Areas of Expertise:
+                                    Provide a list of 12 skills that are most relevant to the job description. These skills should be mentioned in or inferred from the resume and align closely with the requirements listed in the job description.
 
-                Present your analysis in JSON format with the following schema:
-                {{
-                "profile_summary": {{
-                    "type": "string",
-                    "description": "A brief summary of the individual's professional background and skills."
-                }},
-                "key_achievements": {{
-                    "type": "array",
-                    "description": "A list of key achievements highlighting significant accomplishments.",
-                    "items": {{
-                    "type": "string",
-                    "description": "A single key achievement."
-                    }},
-                    "minItems": 1,
-                    "uniqueItems": true
-                }},
-                "areas_of_expertise": {{
-                    "type": "array",
-                    "description": "A list of areas where the individual has specialized expertise.",
-                    "items": {{
-                    "type": "string",
-                    "description": "A single area of expertise."
-                    }},
-                    "minItems": 1,
-                    "uniqueItems": true
-                }}
-                }}
+                                    Present your analysis in JSON format with the following schema:
+                                    {{
+                                    "profile_summary": {{
+                                        "type": "string",
+                                        "description": "A brief summary of the individual's professional background and skills."
+                                    }},
+                                    "key_achievements": {{
+                                        "type": "array",
+                                        "description": "A list of key achievements highlighting significant accomplishments.",
+                                        "items": {{
+                                        "type": "string",
+                                        "description": "A single key achievement."
+                                        }},
+                                        "minItems": 1,
+                                        "uniqueItems": true
+                                    }},
+                                    "areas_of_expertise": {{
+                                        "type": "array",
+                                        "description": "A list of areas where the individual has specialized expertise.",
+                                        "items": {{
+                                        "type": "string",
+                                        "description": "A single area of expertise."
+                                        }},
+                                        "minItems": 1,
+                                        "uniqueItems": true
+                                    }}
+                                    }}
 
-                Remember to provide only truthful information that can be referenced from or inferred from the original resume. Ensure that all content is tailored to match the requirements specified in the job description. """
-                }
-            ]
-        }
-    ]
-)
-print(message.content)
+                                    Remember to provide only truthful information that can be referenced from or inferred from the original resume. Ensure that all content is tailored to match the requirements specified in the job description. """
+                                    }
+                                ]
+                            }
+                        ]
+                    )
+            print(message.content)
             # Extract the content
-tailored_content = (message.content)  # Extract content
+            tailored_content = (message.content)  # Extract content
 
 # Check if tailored_content is a list and get the first element
-if isinstance(tailored_content, list) and len(tailored_content) > 0:
-    tailored_content = tailored_content[0]  # Get the first element which should be TextBlock
+            if isinstance(tailored_content, list) and len(tailored_content) > 0:
+                tailored_content = tailored_content[0]  # Get the first element which should be TextBlock
 
 # Check if tailored_content is a TextBlock object and extract its text attribute
-if hasattr(tailored_content, 'text'):
-    json_string = tailored_content.text  # Extract the actual JSON string
+            if hasattr(tailored_content, 'text'):
+                json_string = tailored_content.text  # Extract the actual JSON string
 
     # Ensure json_string is a string before attempting to parse it
-    if isinstance(json_string, str):
+            if isinstance(json_string, str):
         # Parse the JSON content
-        try:
-            data = json.loads(json_string)
-            print("JSON data successfully parsed.")
-        except json.JSONDecodeError as e:
-            print("Failed to parse JSON:", e)
-            data = None
-else:
-    print("Error: tailored_content does not contain valid JSON data.")
+                try:
+                    data = json.loads(json_string)
+                    print("JSON data successfully parsed.")
+                except json.JSONDecodeError as e:
+                    print("Failed to parse JSON:", e)
+                    data = None
+                else:
+                    print("Error: tailored_content does not contain valid JSON data.")
 
 # Verify the parsed data (Optional)
 if data:
     print("\n--- Profile Summary ---")
     print(data['profile_summary'])
 
-    print("\n--- Key Achievements ---")
-    for idx, achievement in enumerate(data['key_achievements'], 1):
-        print(f"{idx}. {achievement}")
+    # print("\n--- Key Achievements ---")
+    # for idx, achievement in enumerate(data['key_achievements'], 1):
+    #     print(f"{idx}. {achievement}")
 
     print("\n--- Areas of Expertise ---")
     for idx, skill in enumerate(data['areas_of_expertise'], 1):
@@ -239,24 +239,23 @@ if data:
 
             # Extract data
         profile_summary = data.get('profile_summary', "") 
-        key_achievements = data.get('key_achievements', [])
-        areas_of_expertise = data.get('areas_of_expertise', [])
+        key_achievements = data.get('key_achievements', []) 
+        areas_of_expertise = data.get('areas_of_expertise', []) 
 
             # Ensure exactly 3 key achievements
         if len(key_achievements) < 3:
-            key_achievements += [""] * (3 - len(key_achievements))
+                key_achievements += [""] * (3 - len(key_achievements))
         elif len(key_achievements) > 3:
-
-            key_achievements = key_achievements[:3]
+                key_achievements = key_achievements[:3]
 
             # Ensure exactly 12 areas of expertise
-            if len(areas_of_expertise) < 12:
-                areas_of_expertise += [""] * (12 - len(areas_of_expertise))
-            elif len(areas_of_expertise) > 12:
+        if len(areas_of_expertise) < 12: 
+                areas_of_expertise += [""] * (12 - len(areas_of_expertise)) 
+        elif len(areas_of_expertise) > 12: 
                 areas_of_expertise = areas_of_expertise[:12]
                 st.json(data)
-            # Define the Typst template with placeholders
-            template = f"""#set text(font: "inter",size: 8.5pt, hyphenate: true, ligatures: false, weight: "regular") 
+            # Define the Typst template with placeholders 
+    template = f"""#set text(font: "inter",size: 8.5pt, hyphenate: true, ligatures: false, weight: "regular") 
 #set page(margin: (x: 0.9cm, y: 0.9cm))
 #set par(justify: true, leading: 0.7em,linebreaks: "optimized")
 #set block(below: 1.1em)
@@ -294,7 +293,7 @@ peerapat.chiaprasert@gmail.com |
     {areas_of_expertise[7]}
   ]
 #colbreak()
-  #align(center)[
+  #align(center) [
     {areas_of_expertise[8]}\\
     {areas_of_expertise[9]}\\
     {areas_of_expertise[10]}\\
@@ -329,34 +328,33 @@ peerapat.chiaprasert@gmail.com |
 - Enhanced efficiency for listed manufacturing company through business process improvement. Recommended new flow charts, SOPs, and integrated ERP systems to streamline operations and boost overall productivity.
 == EDUCATION
 #chiline()
-*Thammasat University* #h(1fr) Jun 2011 -- Dec 2014 \\
-Bachelor of Accounting (International Program).strip"""()
-
-
+            *Thammasat University* #h(1fr) Jun 2011 -- Dec 2014 \\
+            Bachelor of Accounting (International Program)
+            """
             # Save the template to a temporary .typ file
-            current_date = datetime.now().strftime("%Y-%m-%d")
-            filename_typ = f"Tailored_Resume_{current_date}_{role}.typ"
-            with open(filename_typ, "w", encoding="utf-8") as file:
-                file.write(template)
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    filename_typ = f"Tailored_Resume_{current_date}_{role}.typ"
+    with open(filename_typ, "w", encoding="utf-8") as file:
+        file.write(template)
 
             # Compile Typst to PDF
-            output_pdf = f"Tailored_Resume_{current_date}_{role}.pdf"
-            try:
-                # Assuming default fonts; adjust 'font_paths' if custom fonts are needed
-                typst.compile(filename_typ, font_path = ["/fonts/ttf"], output=output_pdf)
-            except Exception as e:
-                st.error(f"Typst compilation failed: {e}")
-                st.stop()
+    output_pdf = f"Tailored_Resume_{current_date}_{role}.pdf"
+    try:
+        # Assuming default fonts; adjust 'font_paths' if custom fonts are needed
+        typst.compile(filename_typ, font_path = ["/fonts/ttf"], output=output_pdf)
+    except Exception as e:
+        st.error(f"Typst compilation failed: {e}")
+        st.stop()
 
-            # Read the PDF file
-            with open(output_pdf, 'rb') as pdf_file:
-                pdf_bytes = pdf_file.read()
+    # Read the generated PDF file
+    with open(output_pdf, 'rb') as pdf_file:
+        pdf_bytes = pdf_file.read()
 
-            if pdf_bytes:
+    if pdf_bytes:
                 # Display subheader and download button
-                st.subheader("Generated Resume")
-                st.download_button(
-                    label="Download PDF",
-                    data=pdf_bytes,
-                    file_name=f"Tailored_Resume_{current_date}_{role}.pdf",
-                    mime="application/pdf")
+        st.subheader("Generated Resume")
+        st.download_button(
+            label="Download PDF",
+            data=pdf_bytes,
+            file_name=f"Tailored_Resume_{current_date}_{role}.pdf",
+            mime="application/pdf")
