@@ -223,162 +223,162 @@ if st.button("Generate Tailored Resume"):
                     data = None
                 else:
                     print("Error: tailored_content does not contain valid JSON data.")
-data = json.loads(json_string)
-# Verify the parsed data (Optional)
-if data:
-    print("\n--- Profile Summary ---")
-    print(data['profile_summary'])
 
-    # print("\n--- Key Achievements ---")
-    # for idx, achievement in enumerate(data['key_achievements'], 1):
-    #     print(f"{idx}. {achievement}")
+                # Verify the parsed data (Optional)
+                if data:
+                    print("\n--- Profile Summary ---")
+                    print(data['profile_summary'])
 
-    print("\n--- Areas of Expertise ---")
-    for idx, skill in enumerate(data['areas_of_expertise'], 1):
-        print(f"{idx}. {skill}") 
+                    # print("\n--- Key Achievements ---")
+                    # for idx, achievement in enumerate(data['key_achievements'], 1):
+                    #     print(f"{idx}. {achievement}")
 
-            # Extract data
-        profile_summary = data.get('profile_summary', "") 
-        key_achievements = data.get('key_achievements', []) 
-        areas_of_expertise = data.get('areas_of_expertise', []) 
+                    print("\n--- Areas of Expertise ---")
+                    for idx, skill in enumerate(data['areas_of_expertise'], 1):
+                        print(f"{idx}. {skill}") 
 
-            # Ensure exactly 3 key achievements
-        if len(key_achievements) < 3:
-                key_achievements += [""] * (3 - len(key_achievements))
-        elif len(key_achievements) > 3:
-                key_achievements = key_achievements[:3]
+                            # Extract data
+                        profile_summary = data.get('profile_summary', "") 
+                        key_achievements = data.get('key_achievements', []) 
+                        areas_of_expertise = data.get('areas_of_expertise', []) 
 
-            # Ensure exactly 12 areas of expertise
-        if len(areas_of_expertise) < 12: 
-                areas_of_expertise += [""] * (12 - len(areas_of_expertise)) 
-        elif len(areas_of_expertise) > 12: 
-                areas_of_expertise = areas_of_expertise[:12]
-                st.json(data)
-            # Define the Typst template with placeholders 
-    template = f"""#set text(font: "inter",size: 8.5pt, hyphenate: true, ligatures: false, weight: "regular") 
-#set page(margin: (x: 0.9cm, y: 0.9cm))
-#set par(justify: true, leading: 0.7em,linebreaks: "optimized")
-#set block(below: 1.1em)
-#set list(tight: true, spacing: auto)
-#let chiline() = {{v(-3pt); line(length: 100%); v(-5pt)}}
-#set list(marker: [•])
-#show heading.where(level: 1): set text(fill: blue,font: "inter")
-#show heading.where(level: 2): set text(fill: blue,font: "inter")
-#show heading.where(level: 3): set text(fill: blue,font: "inter")
-#align(center)[
-= Peerapat Chiaprasert (Chin)
-peerapat.chiaprasert@gmail.com |
-#link("https://linkedin.com/in/chpeerapat")[linkedin.com/in/chpeerapat] |
-(+66)86-624-6630 | Bangkok, Thailand]
-== PROFILE SUMMARY
-#chiline()
-*{profile_summary}*
-- {key_achievements[0]}
-- {key_achievements[1]}
-- {key_achievements[2]}
-== AREAS OF EXPERTISE
-#chiline()
-#columns(3)[
-  #align(center)[
-    {areas_of_expertise[0]}\\
-    {areas_of_expertise[1]}\\
-    {areas_of_expertise[2]}\\
-    {areas_of_expertise[3]}
-  ]
-#colbreak()
-  #align(center)[
-    {areas_of_expertise[4]}\\
-    {areas_of_expertise[5]}\\
-    {areas_of_expertise[6]}\\
-    {areas_of_expertise[7]}
-  ]
-#colbreak()
-  #align(center) [
-    {areas_of_expertise[8]}\\
-    {areas_of_expertise[9]}\\
-    {areas_of_expertise[10]}\\
-    {areas_of_expertise[11]}
-  ]
-]
-== WORK EXPERIENCE
-#chiline()
-*TiffinLabs*#h(1fr) Mar 2022 -- Oct 2023 \\
-*Country General Manager*
-- Expanded TiffinLabs' delivery-centric brand to 100 storefronts in Thailand. Led and developed the entire business team, overseeing marketing, business development, and operations. Streamlined processes for efficient growth and market penetration.
-- Developed product value propositions for 7 delivery-focused food brands. Defined brand roadmaps ensuring product-market fit and established processes to capture evolving trends. Continuously refined offerings based on consumer feedback.
-- Boosted GMV by 20% monthly through strategic marketing collaborations with delivery platforms. Maximized NPD sales by aligning promotional efforts and implementing regular product enhancements through agile methodology.
-- Achieved 15% COGS reduction by initiating fulfillment partnerships with distributors. Negotiated favorable terms to meet target pricing and quality standards. Improved sourcing processes, resulting in faster procurement and increased efficiency.
-*Grab*#h(1fr) Jun 2017 -- Feb 2022 \\
-*Head, GrabKitchen* (2019-2022)
-- Established Thailand's largest cloud kitchen network, GrabKitchen, developing an asset-lite model. Secured partnership with top F&B company CRG, creating a scalable, profitable business model for long-term growth.
-- Grew GMV by average 20% per month and achieved 4x ROI through strategic marketing campaigns. Managed thematic promotions, partnerships, and Joint Business Plans to drive customer acquisition and retention .
-- Created a data-driven model for selecting profitable expansion locations. Utilized past performance data and location-specific demand trends to calculate individual kitchen profitability and determine accurate payback periods.
-- Managed a diverse portfolio exceeding 400 million THB in annual GMV. Oversaw 120+ F&B accounts, including street vendors, local chains, QSRs, and strategic partners, ensuring optimal selections across segments to maximize growth
-*Operations Manager, GrabFood | Special Project Lead, GrabBike & GrabExpress* (2017-2019)
-- Propelled GrabFood to market leadership within 8 months through strategic initiatives. Established and optimized key functions including fleet management, business development, revenue collection, and customer services.
-- Developed e-commerce strategies for leading F&B brands. Designed tailored solutions to launch and grow online channel for major brands such as MK, Starbucks, and CRG, driving online growth and enhancing market competitiveness
-- Built and mentored high-performing teams across various functions and locations.  Oversaw 100+ staff members, including 7 direct reports, fostering a culture of excellence and continuous improvement throughout the organization.
-*Ipsos Business Consulting* #h(1fr) Jul 2016 -- May 2017 \\
-*Associate Consultant*
-- Developed e-payment business model and identified strategic partners for successful launch. Utilized insightful market data to shortlist potential collaborators, ensuring a strong foundation for the new venture.
-- Designed go-to-market strategy for Thai financial institution's e-commerce launch. Conducted comprehensive market research and analysis to inform strategic decisions and optimize market entry approach.
-*EY (Ernst & Young)* #h(1fr) Feb 2015 -- Jun 2016 \\
-*Consultant*
-- Created costing model to pinpoint service costs and address profitability issues for Ministry of Public Health hospitals nationwide. Analyzed data to identify root causes and areas for financial improvement and efficiency gains.
-- Enhanced efficiency for listed manufacturing company through business process improvement. Recommended new flow charts, SOPs, and integrated ERP systems to streamline operations and boost overall productivity.
-== EDUCATION
-#chiline()
-            *Thammasat University* #h(1fr) Jun 2011 -- Dec 2014 \\
-            Bachelor of Accounting (International Program)
-            """.strip()
-            # Save the template to a temporary .typ file
-    template = template.replace("[PROFILE_SUMMARY]", profile_summary)
-    template = template.replace("[SUMMARY_POINT_1]", key_achievements[0])
-    template = template.replace("[SUMMARY_POINT_2]", key_achievements[1])
-    template = template.replace("[SUMMARY_POINT_3]", key_achievements[2])
+                            # Ensure exactly 3 key achievements
+                        if len(key_achievements) < 3:
+                                key_achievements += [""] * (3 - len(key_achievements))
+                        elif len(key_achievements) > 3:
+                                key_achievements = key_achievements[:3]
 
-    template = template.replace("[SKILL_1]", areas_of_expertise[0])
-    template = template.replace("[SKILL_2]", areas_of_expertise[1])
-    template = template.replace("[SKILL_3]", areas_of_expertise[2])
-    template = template.replace("[SKILL_4]", areas_of_expertise[3])
-    template = template.replace("[SKILL_5]", areas_of_expertise[4])
-    template = template.replace("[SKILL_6]", areas_of_expertise[5])
-    template = template.replace("[SKILL_7]", areas_of_expertise[6])
-    template = template.replace("[SKILL_8]", areas_of_expertise[7])
-    template = template.replace("[SKILL_9]", areas_of_expertise[8])
-    template = template.replace("[SKILL_10]", areas_of_expertise[9])
-    template = template.replace("[SKILL_11]", areas_of_expertise[10])
-    template = template.replace("[SKILL_12]", areas_of_expertise[11])
+                            # Ensure exactly 12 areas of expertise
+                        if len(areas_of_expertise) < 12: 
+                                areas_of_expertise += [""] * (12 - len(areas_of_expertise)) 
+                        elif len(areas_of_expertise) > 12: 
+                                areas_of_expertise = areas_of_expertise[:12]
+                                st.json(data)
+                            # Define the Typst template with placeholders 
+                    template = f"""#set text(font: "inter",size: 8.5pt, hyphenate: true, ligatures: false, weight: "regular") 
+                #set page(margin: (x: 0.9cm, y: 0.9cm))
+                #set par(justify: true, leading: 0.7em,linebreaks: "optimized")
+                #set block(below: 1.1em)
+                #set list(tight: true, spacing: auto)
+                #let chiline() = {{v(-3pt); line(length: 100%); v(-5pt)}}
+                #set list(marker: [•])
+                #show heading.where(level: 1): set text(fill: blue,font: "inter")
+                #show heading.where(level: 2): set text(fill: blue,font: "inter")
+                #show heading.where(level: 3): set text(fill: blue,font: "inter")
+                #align(center)[
+                = Peerapat Chiaprasert (Chin)
+                peerapat.chiaprasert@gmail.com |
+                #link("https://linkedin.com/in/chpeerapat")[linkedin.com/in/chpeerapat] |
+                (+66)86-624-6630 | Bangkok, Thailand]
+                == PROFILE SUMMARY
+                #chiline()
+                *{profile_summary}*
+                - {key_achievements[0]}
+                - {key_achievements[1]}
+                - {key_achievements[2]}
+                == AREAS OF EXPERTISE
+                #chiline()
+                #columns(3)[
+                #align(center)[
+                    {areas_of_expertise[0]}\\
+                    {areas_of_expertise[1]}\\
+                    {areas_of_expertise[2]}\\
+                    {areas_of_expertise[3]}
+                ]
+                #colbreak()
+                #align(center)[
+                    {areas_of_expertise[4]}\\
+                    {areas_of_expertise[5]}\\
+                    {areas_of_expertise[6]}\\
+                    {areas_of_expertise[7]}
+                ]
+                #colbreak()
+                #align(center) [
+                    {areas_of_expertise[8]}\\
+                    {areas_of_expertise[9]}\\
+                    {areas_of_expertise[10]}\\
+                    {areas_of_expertise[11]}
+                ]
+                ]
+                == WORK EXPERIENCE
+                #chiline()
+                *TiffinLabs*#h(1fr) Mar 2022 -- Oct 2023 \\
+                *Country General Manager*
+                - Expanded TiffinLabs' delivery-centric brand to 100 storefronts in Thailand. Led and developed the entire business team, overseeing marketing, business development, and operations. Streamlined processes for efficient growth and market penetration.
+                - Developed product value propositions for 7 delivery-focused food brands. Defined brand roadmaps ensuring product-market fit and established processes to capture evolving trends. Continuously refined offerings based on consumer feedback.
+                - Boosted GMV by 20% monthly through strategic marketing collaborations with delivery platforms. Maximized NPD sales by aligning promotional efforts and implementing regular product enhancements through agile methodology.
+                - Achieved 15% COGS reduction by initiating fulfillment partnerships with distributors. Negotiated favorable terms to meet target pricing and quality standards. Improved sourcing processes, resulting in faster procurement and increased efficiency.
+                *Grab*#h(1fr) Jun 2017 -- Feb 2022 \\
+                *Head, GrabKitchen* (2019-2022)
+                - Established Thailand's largest cloud kitchen network, GrabKitchen, developing an asset-lite model. Secured partnership with top F&B company CRG, creating a scalable, profitable business model for long-term growth.
+                - Grew GMV by average 20% per month and achieved 4x ROI through strategic marketing campaigns. Managed thematic promotions, partnerships, and Joint Business Plans to drive customer acquisition and retention .
+                - Created a data-driven model for selecting profitable expansion locations. Utilized past performance data and location-specific demand trends to calculate individual kitchen profitability and determine accurate payback periods.
+                - Managed a diverse portfolio exceeding 400 million THB in annual GMV. Oversaw 120+ F&B accounts, including street vendors, local chains, QSRs, and strategic partners, ensuring optimal selections across segments to maximize growth
+                *Operations Manager, GrabFood | Special Project Lead, GrabBike & GrabExpress* (2017-2019)
+                - Propelled GrabFood to market leadership within 8 months through strategic initiatives. Established and optimized key functions including fleet management, business development, revenue collection, and customer services.
+                - Developed e-commerce strategies for leading F&B brands. Designed tailored solutions to launch and grow online channel for major brands such as MK, Starbucks, and CRG, driving online growth and enhancing market competitiveness
+                - Built and mentored high-performing teams across various functions and locations.  Oversaw 100+ staff members, including 7 direct reports, fostering a culture of excellence and continuous improvement throughout the organization.
+                *Ipsos Business Consulting* #h(1fr) Jul 2016 -- May 2017 \\
+                *Associate Consultant*
+                - Developed e-payment business model and identified strategic partners for successful launch. Utilized insightful market data to shortlist potential collaborators, ensuring a strong foundation for the new venture.
+                - Designed go-to-market strategy for Thai financial institution's e-commerce launch. Conducted comprehensive market research and analysis to inform strategic decisions and optimize market entry approach.
+                *EY (Ernst & Young)* #h(1fr) Feb 2015 -- Jun 2016 \\
+                *Consultant*
+                - Created costing model to pinpoint service costs and address profitability issues for Ministry of Public Health hospitals nationwide. Analyzed data to identify root causes and areas for financial improvement and efficiency gains.
+                - Enhanced efficiency for listed manufacturing company through business process improvement. Recommended new flow charts, SOPs, and integrated ERP systems to streamline operations and boost overall productivity.
+                == EDUCATION
+                #chiline()
+                            *Thammasat University* #h(1fr) Jun 2011 -- Dec 2014 \\
+                            Bachelor of Accounting (International Program)
+                            """.strip()
+                            # Save the template to a temporary .typ file
+                    template = template.replace("[PROFILE_SUMMARY]", profile_summary)
+                    template = template.replace("[SUMMARY_POINT_1]", key_achievements[0])
+                    template = template.replace("[SUMMARY_POINT_2]", key_achievements[1])
+                    template = template.replace("[SUMMARY_POINT_3]", key_achievements[2])
 
-    # Display the populated template
-    print("\n--- Populated Template ---\n")
-    print(template)
+                    template = template.replace("[SKILL_1]", areas_of_expertise[0])
+                    template = template.replace("[SKILL_2]", areas_of_expertise[1])
+                    template = template.replace("[SKILL_3]", areas_of_expertise[2])
+                    template = template.replace("[SKILL_4]", areas_of_expertise[3])
+                    template = template.replace("[SKILL_5]", areas_of_expertise[4])
+                    template = template.replace("[SKILL_6]", areas_of_expertise[5])
+                    template = template.replace("[SKILL_7]", areas_of_expertise[6])
+                    template = template.replace("[SKILL_8]", areas_of_expertise[7])
+                    template = template.replace("[SKILL_9]", areas_of_expertise[8])
+                    template = template.replace("[SKILL_10]", areas_of_expertise[9])
+                    template = template.replace("[SKILL_11]", areas_of_expertise[10])
+                    template = template.replace("[SKILL_12]", areas_of_expertise[11])
 
-    current_date = datetime.now().strftime("%Y-%m-%d")
-        # Save the template to a text file
-    filename_typ = f"Tailored_Resume_{current_date}_{role}.typ"
-    filename = filename_typ
-    with open(filename, "w", encoding="utf-8") as file:
-        file.write(template)
+                    # Display the populated template
+                    print("\n--- Populated Template ---\n")
+                    print(template)
 
-            # Compile Typst to PDF
-    output_pdf = f"Tailored_Resume_{current_date}_{role}.pdf"
-    try:
-        # Assuming default fonts; adjust 'font_paths' if custom fonts are needed
-        typst.compile(filename_typ, font_paths=["/fonts/ttf"], output=output_pdf)
-    except Exception as e:
-        st.error(f"Typst compilation failed: {e}")
-        st.stop()
+                    current_date = datetime.now().strftime("%Y-%m-%d")
+                        # Save the template to a text file
+                    filename_typ = f"Tailored_Resume_{current_date}_{role}.typ"
+                    filename = filename_typ
+                    with open(filename, "w", encoding="utf-8") as file:
+                        file.write(template)
 
-    # Read the generated PDF file
-    with open(output_pdf, 'rb') as pdf_file:
-        pdf_bytes = pdf_file.read()
+                            # Compile Typst to PDF
+                    output_pdf = f"Tailored_Resume_{current_date}_{role}.pdf"
+                    try:
+                        # Assuming default fonts; adjust 'font_paths' if custom fonts are needed
+                        typst.compile(filename_typ, font_paths=["/fonts/ttf"], output=output_pdf)
+                    except Exception as e:
+                        st.error(f"Typst compilation failed: {e}")
+                        st.stop()
 
-    if pdf_bytes:
-                # Display subheader and download button
-        st.subheader("Generated Resume")
-        st.download_button(
-            label="Download PDF",
-            data=pdf_bytes,
-            file_name=f"Tailored_Resume_{current_date}_{role}.pdf",
-            mime="application/pdf")
+                    # Read the generated PDF file
+                    with open(output_pdf, 'rb') as pdf_file:
+                        pdf_bytes = pdf_file.read()
+
+                    if pdf_bytes:
+                                # Display subheader and download button
+                        st.subheader("Generated Resume")
+                        st.download_button(
+                            label="Download PDF",
+                            data=pdf_bytes,
+                            file_name=f"Tailored_Resume_{current_date}_{role}.pdf",
+                            mime="application/pdf")
