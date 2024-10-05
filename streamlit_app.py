@@ -324,24 +324,7 @@ Bachelor of Accounting (International Program)
                 label="Download PDF",
                 data=pdf_bytes,
                 file_name=output_pdf,
-                mime="application/pdf"
-            )
-
-            # Optionally, provide the Typst file for download
-            with open(filename_typ, 'rb') as typ_file:
-                typ_bytes = typ_file.read()
-
-            st.download_button(
-                label="Download PDF File",
-                data=typ_bytes,
-                file_name=filename_typ,
-                mime="text/plain"
-            )
-
-            # Optionally, display number of pages using PyPDF2
-            reader = PyPDF2.PdfReader(BytesIO(pdf_bytes))
-            number_of_pages = len(reader.pages)
-            st.info(f"The generated PDF has {number_of_pages} pages.")
+                mime="application/pdf")
 
         except Exception as e:
             st.error(f"An error occurred: {e}")
