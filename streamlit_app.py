@@ -97,6 +97,8 @@ Bachelor of Accounting (International Program)
 """)
 
 # Text area for Job Description
+st.header("Job Title")
+role = st.text_area("head of operations"),
 st.header("Job Description")
 job_description = st.text_area("Enter the job description here:", height=400, value="""About the job
 Job Description:
@@ -296,7 +298,6 @@ Bachelor of Accounting (International Program)
 
             # Save the template to a temporary .typ file
             current_date = datetime.now().strftime("%Y-%m-%d")
-            role = "Head_of_New_Business_Development"
             filename_typ = f"Tailored_Resume_{current_date}_{role}.typ"
             with open(filename_typ, "w", encoding="utf-8") as file:
                 file.write(template)
