@@ -136,7 +136,7 @@ if st.button("Generate Tailored Resume"):
             model="claude-3-5-sonnet-20240620",
             max_tokens=8192,
             temperature=0.2,
-            message = [ f"""You are an AI assistant tasked with analyzing a resume and a job description to create customized content for a job application. Your goal is to provide truthful and relevant information based on the given resume while tailoring it to the specific job requirements.
+            messages = [ f"""You are an AI assistant tasked with analyzing a resume and a job description to create customized content for a job application. Your goal is to provide truthful and relevant information based on the given resume while tailoring it to the specific job requirements.
 
 First, carefully read and analyze the following documents:
 
