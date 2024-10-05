@@ -255,7 +255,7 @@ if st.button("Generate Tailored Resume"):
                                 areas_of_expertise = areas_of_expertise[:12]
                                 st.json(data)
                             # Define the Typst template with placeholders 
-                    template = f"""#set text(font: "inter",size: 8.5pt, hyphenate: true, ligatures: false, weight: "regular") 
+                    template = """#set text(font: "inter",size: 8.5pt, hyphenate: true, ligatures: false, weight: "regular") 
                 #set page(margin: (x: 0.9cm, y: 0.9cm))
                 #set par(justify: true, leading: 0.7em,linebreaks: "optimized")
                 #set block(below: 1.1em)
@@ -328,8 +328,8 @@ if st.button("Generate Tailored Resume"):
                 - Enhanced efficiency for listed manufacturing company through business process improvement. Recommended new flow charts, SOPs, and integrated ERP systems to streamline operations and boost overall productivity.
                 == EDUCATION
                 #chiline()
-                            *Thammasat University* #h(1fr) Jun 2011 -- Dec 2014 \\
-                            Bachelor of Accounting (International Program)
+                 *Thammasat University* #h(1fr) Jun 2011 -- Dec 2014 \\
+                Bachelor of Accounting (International Program)
                             """.strip()
                             # Save the template to a temporary .typ file
                     template = template.replace("[PROFILE_SUMMARY]", profile_summary)
@@ -356,16 +356,16 @@ if st.button("Generate Tailored Resume"):
 
                     current_date = datetime.now().strftime("%Y-%m-%d")
                         # Save the template to a text file
-                    filename_typ = f"Tailored_Resume_{current_date}_{role}.typ"
+                    filename_typ = f"""Tailored_Resume_{current_date}_{role}.typ"""
                     filename = filename_typ
                     with open(filename, "w", encoding="utf-8") as file:
                         file.write(template)
 
                             # Compile Typst to PDF
-                    output_pdf = f"Tailored_Resume_{current_date}_{role}.pdf"
+                    output_pdf = f"""Tailored_Resume_{current_date}_{role}.pdf"""
                     try:
                     # Assuming default fonts; adjust 'font_paths' if custom fonts are needed
-                        typst.compile(f"Tailored_Resume_{current_date}_{role}.typ", font_paths=["/fonts/ttf"], output=f"Tailored_Resume_{current_date}_{role}.pdf")
+                        typst.compile(f"""Tailored_Resume_{current_date}_{role}.typ""", font_paths=["/fonts/ttf"], output=f"""Tailored_Resume_{current_date}_{role}.pdf""")
                     except Exception as e:output_pdf
                     st.error(f"Typst compilation failed: {e}")
                     st.stop()
@@ -380,5 +380,5 @@ if st.button("Generate Tailored Resume"):
                         st.download_button(
                             label="Download PDF",
                             data=pdf_bytes,
-                            file_name=f"Tailored_Resume_{current_date}_{role}.pdf",
+                            file_name=f"""Tailored_Resume_{current_date}_{role}.pdf""",
                             mime="application/pdf")
